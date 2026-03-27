@@ -445,7 +445,7 @@ h1 {
       <div class="meter-emoji" id="meter-emoji">😐</div>
     </div>
     <div class="meter-bar-bg">
-      <div class="meter-bar-fill" id="meter-fill" style="width:50%;background:linear-gradient(90deg,#FF1493,#BF5FFF,#00D4FF);"></div>
+      <div class="meter-bar-fill" id="meter-fill" style="width:0%;background:linear-gradient(90deg,#FF1493,#BF5FFF,#00D4FF);"></div>
     </div>
     <div class="meter-status" id="meter-status">Pick a subject above to start! 👆</div>
   </div>
@@ -492,7 +492,7 @@ h1 {
 // ══════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════
-let readiness    = 50;
+let readiness    = 0;
 let currentMode  = null;
 let currentQ     = null;
 let answered     = false;
@@ -833,14 +833,14 @@ function checkAnswer() {
   if (isCorrect) {
     correctCount++;
     document.getElementById('score-correct').textContent = correctCount;
-    readiness = Math.min(100, readiness + 5);
+    readiness = Math.min(100, readiness + 2);
     fb.textContent = correctMsgs[Math.floor(Math.random() * correctMsgs.length)];
     fb.className   = 'feedback-correct';
     spawnStars();
   } else {
     wrongCount++;
     document.getElementById('score-wrong').textContent = wrongCount;
-    readiness = Math.max(0, readiness - 5);
+    readiness = Math.max(0, readiness - 2);
     const correctShow = currentQ.type === 'words'
       ? `The word is: <strong>${currentQ.word.toUpperCase()}</strong>`
       : `The answer is: <strong>${currentQ.answer}</strong>`;

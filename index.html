@@ -670,7 +670,7 @@ function setupSubtraction() {
 // ══════════════════════════════════════════════
 function setupTime() {
   const hour        = Math.floor(Math.random() * 12) + 1;
-  const minuteOpts  = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+  const minuteOpts  = [0, 15, 30, 45];
   const minute      = minuteOpts[Math.floor(Math.random() * minuteOpts.length)];
   const hourDeg     = ((hour % 12) * 30) + (minute * 0.5);
   const minuteDeg   = minute * 6;

@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⭐ Test Ready!</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: #FFF0F8;
+  background-image: radial-gradient(circle, rgba(255,20,147,0.18) 2px, transparent 2px);
+  background-size: 28px 28px;
+  min-height: 100vh;
+  padding: 20px 16px 40px;
+}
+
+#app {
+  max-width: 660px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2rem, 6vw, 3rem);
+  text-align: center;
+  color: #FF1493;
+  text-shadow: 3px 3px 0 #FFE600;
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #FF69B4;
+  font-weight: 800;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── MODE BUTTONS ── */
+.modes {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.mode-btn {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1rem;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+  box-shadow: 0 5px 0 rgba(0,0,0,0.18);
+  user-select: none;
+  color: white;
+}
+.mode-btn:hover  { transform: translateY(-2px); box-shadow: 0 7px 0 rgba(0,0,0,0.18); }
+.mode-btn:active { transform: translateY(3px);  box-shadow: 0 2px 0 rgba(0,0,0,0.18); }
+.mode-btn.active { transform: translateY(3px);  box-shadow: 0 2px 0 rgba(0,0,0,0.18); filter: brightness(1.08); }
+
+.btn-time    { background: #00D4FF; }
+.btn-add     { background: #FF1493; }
+.btn-sub     { background: #BF5FFF; }
+.btn-words   { background: #FFB800; color: #5a3800; }
+.btn-measure { background: #39D353; }
+
+/* ── METER ── */
+.meter-wrap {
+  background: white;
+  border-radius: 22px;
+  padding: 14px 20px 10px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 20px rgba(255,20,147,0.10);
+  border: 3px solid #FF69B4;
+}
+
+.meter-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.meter-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.05rem;
+  color: #FF69B4;
+}
+
+.meter-emoji { font-size: 1.9rem; transition: all 0.4s; }
+
+.meter-bar-bg {
+  height: 26px;
+  background: #FFE0F0;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.meter-bar-fill {
+  height: 100%;
+  border-radius: 20px;
+  transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.5s;
+  position: relative;
+}
+
+.meter-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 5px; left: 12px; right: 12px;
+  height: 7px;
+  background: rgba(255,255,255,0.45);
+  border-radius: 10px;
+}
+
+.meter-status {
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  margin-top: 6px;
+  color: #FF69B4;
+  min-height: 18px;
+}
+
+/* ── SCORE STRIP ── */
+.score-strip {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.score-item {
+  background: white;
+  border-radius: 50px;
+  padding: 5px 18px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  border: 2px solid transparent;
+}
+.score-correct { color: #39D353; border-color: #39D353; }
+.score-wrong   { color: #FF1493; border-color: #FF1493; }
+
+/* ── QUESTION CARD ── */
+.q-card {
+  background: white;
+  border-radius: 26px;
+  padding: 28px 24px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 24px rgba(255,20,147,0.08);
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #FFD6EC;
+  transition: border-color 0.3s;
+  text-align: center;
+  gap: 10px;
+}
+
+.q-card.mode-time    { border-color: #00D4FF; }
+.q-card.mode-add     { border-color: #FF1493; }
+.q-card.mode-sub     { border-color: #BF5FFF; }
+.q-card.mode-words   { border-color: #FFB800; }
+.q-card.mode-measure { border-color: #39D353; }
+
+.q-prompt {
+  font-size: 1rem;
+  color: #FF69B4;
+  font-weight: 800;
+}
+
+.q-main {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2.2rem, 8vw, 3.4rem);
+  color: #333;
+  line-height: 1.2;
+}
+
+.q-hint-text {
+  color: #FFB3D6;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+/* word display */
+.word-display {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  color: #333;
+  letter-spacing: 5px;
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.letter-box {
+  display: inline-flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-width: 28px;
+  height: 40px;
+  line-height: 1;
+}
+
+.letter-blank {
+  color: #FF1493;
+  border-bottom: 4px solid #FF1493;
+  min-width: 28px;
+}
+
+/* hint box */
+.hint-box {
+  background: #FFF0FA;
+  border: 2px dashed #FF69B4;
+  border-radius: 14px;
+  padding: 10px 18px;
+  color: #CC0066;
+  font-weight: 800;
+  font-size: 0.9rem;
+  margin-top: 4px;
+  animation: fadein 0.3s ease;
+}
+
+@keyframes fadein { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* clock */
+.clock-wrap {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 4px auto;
+}
+.clock-wrap img {
+  position: absolute;
+  top: 0; left: 0;
+  width: 200px;
+  height: 200px;
+}
+
+/* ruler */
+.ruler-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* welcome */
+.welcome {
+  text-align: center;
+  color: #ccc;
+  font-size: 1.1rem;
+  font-weight: 800;
+  padding: 10px;
+}
+
+/* ── ANSWER AREA ── */
+.answer-section {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+#ans-input {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.7rem;
+  padding: 12px 22px;
+  border: 3px solid #ddd;
+  border-radius: 50px;
+  outline: none;
+  width: 170px;
+  text-align: center;
+  transition: border-color 0.2s;
+  background: white;
+}
+#ans-input:focus   { border-color: #FF1493; }
+#ans-input:disabled { background: #f5f5f5; color: #aaa; }
+
+.action-btn {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.1rem;
+  padding: 14px 26px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 5px 0 rgba(0,0,0,0.12);
+  transition: transform 0.15s, box-shadow 0.15s;
+  color: white;
+}
+.action-btn:hover  { transform: translateY(-2px); box-shadow: 0 7px 0 rgba(0,0,0,0.12); }
+.action-btn:active { transform: translateY(3px);  box-shadow: 0 2px 0 rgba(0,0,0,0.12); }
+.action-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+#submit-btn { background: #FF1493; }
+#hint-btn   { background: #FFB800; color: #5a3800; }
+#next-btn   { background: #BF5FFF; display: block; margin: 0 auto; }
+
+/* ── FEEDBACK ── */
+#feedback {
+  text-align: center;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.5rem;
+  min-height: 52px;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.feedback-correct { color: #39D353; animation: pop   0.35s ease; }
+.feedback-wrong   { color: #FF1493; animation: shake 0.35s ease; }
+
+@keyframes pop   { 0% { transform:scale(0.8); } 55% { transform:scale(1.12); } 100% { transform:scale(1); } }
+@keyframes shake { 0%,100% { transform:translateX(0); } 25% { transform:translateX(-9px); } 75% { transform:translateX(9px); } }
+
+/* ── FLOATING STARS ── */
+.star {
+  position: fixed;
+  font-size: 2rem;
+  pointer-events: none;
+  z-index: 9999;
+  animation: flystar 1.1s ease-out forwards;
+}
+@keyframes flystar {
+  0%   { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(-220px) scale(0.4) rotate(360deg); opacity: 0; }
+}
+/* ── JOKE MODAL ── */
+.joke-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 20, 147, 0.18);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeOverlay 0.3s ease;
+}
+@keyframes fadeOverlay { from { opacity:0; } to { opacity:1; } }
+
+.joke-box {
+  background: white;
+  border-radius: 30px;
+  padding: 36px 30px 28px;
+  max-width: 380px;
+  width: 90%;
+  text-align: center;
+  border: 4px solid #FF69B4;
+  box-shadow: 0 12px 50px rgba(255,20,147,0.25);
+  animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+}
+@keyframes popIn { from { transform:scale(0.6); opacity:0; } to { transform:scale(1); opacity:1; } }
+
+.joke-top-emoji { font-size: 3rem; margin-bottom: 10px; }
+
+.joke-label {
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.85rem;
+  color: #FF69B4;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.joke-text {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.25rem;
+  color: #333;
+  line-height: 1.45;
+  margin-bottom: 20px;
+}
+
+.joke-punchline {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.45rem;
+  color: #FF1493;
+  margin-bottom: 24px;
+  min-height: 2rem;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+.joke-punchline.hidden { opacity: 0; pointer-events: none; }
+.joke-reveal-hint {
+  font-size: 0.78rem;
+  color: #FFB3D6;
+  font-weight: 800;
+  margin-top: -18px;
+  margin-bottom: 22px;
+}
+
+.joke-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.joke-btn {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.05rem;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 5px 0 rgba(0,0,0,0.12);
+  transition: transform 0.15s, box-shadow 0.15s;
+  color: white;
+}
+.joke-btn:hover  { transform: translateY(-2px); box-shadow: 0 7px 0 rgba(0,0,0,0.12); }
+.joke-btn:active { transform: translateY(3px);  box-shadow: 0 2px 0 rgba(0,0,0,0.12); }
+.joke-btn-funny  { background: #39D353; }
+.joke-btn-nope   { background: #BF5FFF; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <h1>⭐ Test Ready! ⭐</h1>
+  <div class="subtitle">Practice Makes Perfect</div>
+
+  <div class="modes">
+    <button class="mode-btn btn-time"    onclick="setMode('time')">🕐 Time</button>
+    <button class="mode-btn btn-add"     onclick="setMode('add')">➕ Adding</button>
+    <button class="mode-btn btn-sub"     onclick="setMode('sub')">➖ Subtracting</button>
+    <button class="mode-btn btn-words"   onclick="setMode('words')">📝 Words</button>
+    <button class="mode-btn btn-measure" onclick="setMode('measure')">📏 Measuring</button>
+  </div>
+
+  <div class="meter-wrap">
+    <div class="meter-top">
+      <div class="meter-title">Test Readiness</div>
+      <div class="meter-emoji" id="meter-emoji">😐</div>
+    </div>
+    <div class="meter-bar-bg">
+      <div class="meter-bar-fill" id="meter-fill" style="width:50%;background:linear-gradient(90deg,#FF1493,#BF5FFF,#00D4FF);"></div>
+    </div>
+    <div class="meter-status" id="meter-status">Pick a subject above to start! 👆</div>
+  </div>
+
+  <div class="score-strip">
+    <div class="score-item score-correct">✅ <span id="score-correct">0</span> Correct</div>
+    <div class="score-item score-wrong">❌ <span id="score-wrong">0</span> Wrong</div>
+  </div>
+
+  <div class="q-card" id="q-card">
+    <div class="welcome">
+      <div style="font-size:3rem;margin-bottom:12px">🎓</div>
+      Choose a subject up top to begin!
+    </div>
+  </div>
+
+  <div class="answer-section">
+    <input type="text" id="ans-input" placeholder="Answer..." maxlength="8" autocomplete="off">
+    <button class="action-btn" id="submit-btn" onclick="checkAnswer()">Check ✓</button>
+    <button class="action-btn" id="hint-btn"   onclick="showHint()" style="display:none">💡 Hint</button>
+  </div>
+
+  <div id="feedback"></div>
+  <button class="action-btn" id="next-btn" onclick="nextQuestion()" style="display:none">Next Question ➡️</button>
+
+</div>
+
+<!-- JOKE MODAL -->
+<div class="joke-overlay" id="joke-overlay" style="display:none;">
+  <div class="joke-box">
+    <div class="joke-top-emoji">🤣</div>
+    <div class="joke-label">⭐ Joke Break! ⭐</div>
+    <div class="joke-text" id="joke-setup"></div>
+    <div class="joke-reveal-hint" id="joke-hint">👆 tap to reveal the punchline!</div>
+    <div class="joke-punchline hidden" id="joke-punchline"></div>
+    <div class="joke-btns">
+      <button class="joke-btn joke-btn-funny" onclick="closeJoke('funny')">😂 Funny!</button>
+      <button class="joke-btn joke-btn-nope"  onclick="closeJoke('nope')">😐 Not funny</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let readiness    = 50;
+let currentMode  = null;
+let currentQ     = null;
+let answered     = false;
+let hintShown    = false;
+let correctCount = 0;
+let wrongCount   = 0;
+
+// ══════════════════════════════════════════════
+//  WORD BANK  (2nd–3rd grade, with hints)
+// ══════════════════════════════════════════════
+const wordBank = [
+  { word:"because",  hint:"gives a reason why something happened" },
+  { word:"before",   hint:"earlier in time than something else" },
+  { word:"friend",   hint:"someone you like to play with" },
+  { word:"people",   hint:"more than one person" },
+  { word:"school",   hint:"where you go to learn every day" },
+  { word:"around",   hint:"in a circle, or nearby" },
+  { word:"please",   hint:"a polite word to use when asking" },
+  { word:"always",   hint:"every single time, without fail" },
+  { word:"animal",   hint:"a living creature like a dog or bird" },
+  { word:"better",   hint:"more good than it was before" },
+  { word:"butter",   hint:"you spread it on toast or bread" },
+  { word:"center",   hint:"the very middle of something" },
+  { word:"during",   hint:"while something else is happening" },
+  { word:"family",   hint:"the people you live with and love" },
+  { word:"finger",   hint:"one of the five parts of your hand" },
+  { word:"flower",   hint:"a pretty plant that blooms and smells nice" },
+  { word:"follow",   hint:"to go behind or after someone" },
+  { word:"garden",   hint:"an outdoor area where plants are grown" },
+  { word:"happen",   hint:"when something occurs or takes place" },
+  { word:"hungry",   hint:"the feeling of needing food" },
+  { word:"inside",   hint:"not outside — within a building" },
+  { word:"little",   hint:"very small in size" },
+  { word:"middle",   hint:"right between two sides" },
+  { word:"mirror",   hint:"a flat surface that shows your reflection" },
+  { word:"mother",   hint:"a female parent" },
+  { word:"number",   hint:"like 1, 2, 3, or 10" },
+  { word:"orange",   hint:"a round citrus fruit and also a color" },
+  { word:"pencil",   hint:"a writing tool with a graphite tip" },
+  { word:"purple",   hint:"a color made by mixing red and blue" },
+  { word:"rabbit",   hint:"a fluffy animal with very long ears" },
+  { word:"really",   hint:"truly, or very much" },
+  { word:"second",   hint:"right after the first one" },
+  { word:"sister",   hint:"a female sibling in your family" },
+  { word:"summer",   hint:"the hottest season of the year" },
+  { word:"turtle",   hint:"a reptile that carries its house on its back" },
+  { word:"valley",   hint:"low land between two mountains or hills" },
+  { word:"winter",   hint:"the coldest season of the year" },
+  { word:"yellow",   hint:"the bright color of the sun" },
+  { word:"zipper",   hint:"what you pull to open or close your jacket" },
+  { word:"button",   hint:"a small round fastener on a shirt" },
+  { word:"candle",   hint:"a wax stick that gives off light when lit" },
+  { word:"castle",   hint:"a large stone building where royalty lives" },
+  { word:"circle",   hint:"a perfectly round shape" },
+  { word:"cotton",   hint:"a soft, fluffy natural fabric" },
+  { word:"danger",   hint:"a situation that could cause harm" },
+  { word:"dinner",   hint:"the main meal eaten in the evening" },
+  { word:"doctor",   hint:"a person who helps you when you are sick" },
+  { word:"dollar",   hint:"a unit of money in the United States" },
+  { word:"dragon",   hint:"a mythical creature that breathes fire" },
+  { word:"drawer",   hint:"you pull it open to find socks or toys" },
+  { word:"silver",   hint:"a shiny grey metal, like a coin" },
+  { word:"jungle",   hint:"a thick wild forest full of animals" },
+  { word:"planet",   hint:"a large round object that orbits a star" },
+  { word:"pretty",   hint:"nice looking, attractive" },
+  { word:"spring",   hint:"the season after winter when flowers bloom" },
+  { word:"ticket",   hint:"a small paper that lets you enter somewhere" },
+  { word:"window",   hint:"you look through it to see outside" },
+];
+
+// ══════════════════════════════════════════════
+//  FEEDBACK MESSAGES
+// ══════════════════════════════════════════════
+const correctMsgs = [
+  "Amazing! ⭐","You got it! 🎉","Super smart! 🌟","Nailed it! 💪",
+  "Woohoo! 🎊","Perfect! ✨","Way to go! 🏆","Brilliant! 🌈","Yes!! 🥳"
+];
+const wrongMsgs = [
+  "Not quite — keep going!","Almost there!","Good try! You'll get it!",
+  "Don't give up! 💪","So close! Keep practicing!"
+];
+
+// ══════════════════════════════════════════════
+//  METER
+// ══════════════════════════════════════════════
+function updateMeter() {
+  const fill   = document.getElementById('meter-fill');
+  const emoji  = document.getElementById('meter-emoji');
+  const status = document.getElementById('meter-status');
+  fill.style.width = readiness + '%';
+  if (readiness < 20) {
+    emoji.textContent  = '😟';
+    status.textContent = 'Needs more practice — keep going!';
+  } else if (readiness < 40) {
+    emoji.textContent  = '😐';
+    status.textContent = 'Getting started! You can do it!';
+  } else if (readiness < 60) {
+    emoji.textContent  = '🙂';
+    status.textContent = 'Getting better! Keep it up!';
+  } else if (readiness < 80) {
+    emoji.textContent  = '😊';
+    status.textContent = 'Almost ready for the test!';
+  } else {
+    emoji.textContent  = '🌟';
+    status.textContent = 'Test Ready! You are doing GREAT! 🎉';
+  }
+}
+
+// ══════════════════════════════════════════════
+//  MODE SWITCH
+// ══════════════════════════════════════════════
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.btn-${mode}`).classList.add('active');
+  document.getElementById('q-card').className = `q-card mode-${mode}`;
+  document.getElementById('hint-btn').style.display = mode === 'words' ? 'inline-block' : 'none';
+  nextQuestion();
+}
+
+// ══════════════════════════════════════════════
+//  NEXT QUESTION
+// ══════════════════════════════════════════════
+function nextQuestion() {
+  if (!currentMode) return;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className   = '';
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('ans-input').value    = '';
+  document.getElementById('ans-input').disabled = false;
+  document.getElementById('submit-btn').disabled = false;
+  answered  = false;
+  hintShown = false;
+
+  if (currentMode === 'time')    setupTime();
+  else if (currentMode === 'add')     setupAddition();
+  else if (currentMode === 'sub')     setupSubtraction();
+  else if (currentMode === 'words')   setupWords();
+  else if (currentMode === 'measure') setupMeasuring();
+
+  setTimeout(() => document.getElementById('ans-input').focus(), 80);
+}
+
+// ══════════════════════════════════════════════
+//  ADDITION
+// ══════════════════════════════════════════════
+function setupAddition() {
+  const a = Math.floor(Math.random() * 12) + 1;
+  const b = Math.floor(Math.random() * 12) + 1;
+  currentQ = { type:'add', answer: String(a + b) };
+  document.getElementById('q-card').innerHTML = `
+    <div class="q-prompt">What is the sum?</div>
+    <div class="q-main">${a} + ${b} = ?</div>
+  `;
+  document.getElementById('ans-input').maxLength = 3;
+}
+
+// ══════════════════════════════════════════════
+//  SUBTRACTION
+// ══════════════════════════════════════════════
+function setupSubtraction() {
+  let a = Math.floor(Math.random() * 12) + 1;
+  let b = Math.floor(Math.random() * 12) + 1;
+  if (b > a) [a, b] = [b, a];
+  currentQ = { type:'sub', answer: String(a - b) };
+  document.getElementById('q-card').innerHTML = `
+    <div class="q-prompt">What is the difference?</div>
+    <div class="q-main">${a} − ${b} = ?</div>
+  `;
+  document.getElementById('ans-input').maxLength = 3;
+}
+
+// ══════════════════════════════════════════════
+//  TIME  (analog clock via PNG layers)
+// ══════════════════════════════════════════════
+function setupTime() {
+  const hour        = Math.floor(Math.random() * 12) + 1;
+  const minuteOpts  = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+  const minute      = minuteOpts[Math.floor(Math.random() * minuteOpts.length)];
+  const hourDeg     = ((hour % 12) * 30) + (minute * 0.5);
+  const minuteDeg   = minute * 6;
+  const answerStr   = `${hour}:${minute.toString().padStart(2,'0')}`;
+  currentQ = { type:'time', answer: answerStr };
+
+  document.getElementById('q-card').innerHTML = `
+    <div class="q-prompt">What time does the clock show?</div>
+    <div class="clock-wrap">
+      <img src="clock_face.png" alt="clock face">
+      <img src="hour_hand.png"  id="hour-hand" alt="hour hand"
+           style="transform:rotate(${hourDeg}deg);transform-origin:center center;">
+      <img src="min_hand.png"   id="min-hand"  alt="minute hand"
+           style="transform:rotate(${minuteDeg}deg);transform-origin:center center;">
+    </div>
+    <div class="q-hint-text">Type like this: &nbsp;<strong>3:15</strong>&nbsp; or &nbsp;<strong>10:00</strong></div>
+  `;
+  document.getElementById('ans-input').maxLength = 5;
+  document.getElementById('ans-input').placeholder = 'e.g. 3:15';
+}
+
+// ══════════════════════════════════════════════
+//  WORDS  (fill-in-the-blank, 2 missing letters)
+// ══════════════════════════════════════════════
+function setupWords() {
+  const entry = wordBank[Math.floor(Math.random() * wordBank.length)];
+  const word  = entry.word;
+
+  // Pick 2 random unique positions
+  const allPos = Array.from({length: word.length}, (_, i) => i);
+  for (let i = allPos.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [allPos[i], allPos[j]] = [allPos[j], allPos[i]];
+  }
+  const hiddenPos = allPos.slice(0, 2).sort((a,b) => a - b);
+  const answer    = hiddenPos.map(p => word[p]).join('').toUpperCase();
+
+  // Build letter boxes
+  let blankIndex = 0;
+  const letterHTML = word.split('').map((ch, i) =>
+    hiddenPos.includes(i)
+      ? `<span class="letter-box letter-blank" id="blank-${blankIndex++}">_</span>`
+      : `<span class="letter-box">${ch.toUpperCase()}</span>`
+  ).join('');
+
+  currentQ = { type:'words', answer, word, hint: entry.hint, hiddenPos };
+
+  document.getElementById('q-card').innerHTML = `
+    <div class="q-prompt">Fill in the 2 missing letters!</div>
+    <div class="word-display">${letterHTML}</div>
+    <div class="q-hint-text">Type both missing letters in order</div>
+  `;
+  document.getElementById('hint-btn').style.display = 'inline-block';
+  document.getElementById('ans-input').maxLength    = 2;
+  document.getElementById('ans-input').placeholder  = '??';
+}
+
+// ══════════════════════════════════════════════
+//  MEASURING  (SVG ruler, whole & half inches)
+// ══════════════════════════════════════════════
+function setupMeasuring() {
+  const opts        = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5];
+  const measurement = opts[Math.floor(Math.random() * opts.length)];
+  currentQ = { type:'measure', measurement, answer: String(measurement) };
+
+  const SCALE  = 65;   // px per inch
+  const START  = 35;
+  const RY     = 68;   // ruler top-y
+  const RH     = 30;
+  const W      = START + 6 * SCALE + 30;
+  const arrowX = START + measurement * SCALE;
+
+  let ticks = '';
+  // Inch marks
+  for (let i = 0; i <= 6; i++) {
+    const x = START + i * SCALE;
+    ticks += `<line x1="${x}" y1="${RY}" x2="${x}" y2="${RY-20}" stroke="#5C3D11" stroke-width="2"/>`;
+    ticks += `<text x="${x}" y="${RY+22}" text-anchor="middle" font-size="13"
+                    font-family="Nunito,sans-serif" font-weight="800" fill="#5C3D11">${i}</text>`;
+  }
+  // Half-inch marks
+  for (let i = 0; i < 6; i++) {
+    const x = START + (i + 0.5) * SCALE;
+    ticks += `<line x1="${x}" y1="${RY}" x2="${x}" y2="${RY-12}" stroke="#7B5226" stroke-width="1.5"/>`;
+  }
+  // Quarter-inch marks (subtle)
+  for (let i = 0; i < 24; i++) {
+    const x = START + (i * 0.25) * SCALE;
+    if (i % 2 !== 0) continue; // skip halves already drawn
+    ticks += `<line x1="${x}" y1="${RY}" x2="${x}" y2="${RY-7}" stroke="#AA8050" stroke-width="1" opacity="0.5"/>`;
+  }
+
+  document.getElementById('q-card').innerHTML = `
+    <div class="q-prompt">📏 Where does the arrow point on the ruler?</div>
+    <div class="ruler-wrap">
+      <svg viewBox="0 0 ${W} 110" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${W}px;">
+        <!-- ruler body -->
+        <rect x="${START}" y="${RY}" width="${6*SCALE}" height="${RH}" rx="5"
+              fill="#F5DEB3" stroke="#8B6914" stroke-width="2"/>
+        ${ticks}
+        <!-- "inches" label -->
+        <text x="${START + 3*SCALE}" y="${RY+RH-6}" text-anchor="middle"
+              font-size="9" font-family="Nunito,sans-serif" fill="#8B6914" opacity="0.6">inches</text>
+        <!-- arrow stem -->
+        <line x1="${arrowX}" y1="8" x2="${arrowX}" y2="${RY}"
+              stroke="#FF1493" stroke-width="3"/>
+        <!-- arrowhead pointing DOWN to ruler -->
+        <polygon points="${arrowX},${RY} ${arrowX-9},${RY-16} ${arrowX+9},${RY-16}" fill="#FF1493"/>
+        <!-- ? label on arrow -->
+        <text x="${arrowX}" y="22" text-anchor="middle"
+              font-size="16" font-family="Fredoka One,cursive" fill="#FF1493">?</text>
+      </svg>
+    </div>
+    <div class="q-hint-text">Write a whole number like <strong>3</strong> or a half like <strong>2.5</strong></div>
+  `;
+  document.getElementById('ans-input').maxLength   = 4;
+  document.getElementById('ans-input').placeholder = '0';
+}
+
+// ══════════════════════════════════════════════
+//  CHECK ANSWER
+// ══════════════════════════════════════════════
+function checkAnswer() {
+  if (answered || !currentQ) return;
+  const raw = document.getElementById('ans-input').value.trim();
+  if (!raw) return;
+
+  let isCorrect = false;
+
+  if (currentQ.type === 'add' || currentQ.type === 'sub') {
+    isCorrect = raw === currentQ.answer;
+
+  } else if (currentQ.type === 'time') {
+    let s = raw.replace(/\s+/g, ':').replace(/[^\d:]/g,'');
+    if (!s.includes(':')) {
+      if      (s.length === 3) s = s[0] + ':' + s.slice(1);
+      else if (s.length === 4) s = s.slice(0,2) + ':' + s.slice(2);
+    }
+    isCorrect = s === currentQ.answer;
+
+  } else if (currentQ.type === 'words') {
+    isCorrect = raw.toUpperCase().replace(/\s/g,'') === currentQ.answer;
+
+  } else if (currentQ.type === 'measure') {
+    let val = raw.toLowerCase()
+      .replace('½', '.5')
+      .replace(/(\d)\s+1\/2/, '$1.5')
+      .replace(/^1\/2$/,'0.5');
+    const num = parseFloat(val);
+    isCorrect = !isNaN(num) && Math.abs(num - currentQ.measurement) < 0.01;
+  }
+
+  answered = true;
+  document.getElementById('ans-input').disabled  = true;
+  document.getElementById('submit-btn').disabled = true;
+  document.getElementById('next-btn').style.display = 'inline-block';
+
+  const fb = document.getElementById('feedback');
+
+  if (isCorrect) {
+    correctCount++;
+    document.getElementById('score-correct').textContent = correctCount;
+    readiness = Math.min(100, readiness + 5);
+    fb.textContent = correctMsgs[Math.floor(Math.random() * correctMsgs.length)];
+    fb.className   = 'feedback-correct';
+    spawnStars();
+  } else {
+    wrongCount++;
+    document.getElementById('score-wrong').textContent = wrongCount;
+    readiness = Math.max(0, readiness - 5);
+    const correctShow = currentQ.type === 'words'
+      ? `The word is: <strong>${currentQ.word.toUpperCase()}</strong>`
+      : `The answer is: <strong>${currentQ.answer}</strong>`;
+    fb.innerHTML = `${wrongMsgs[Math.floor(Math.random() * wrongMsgs.length)]}<br>
+      <span style="font-size:1rem;color:#aaa;font-family:Nunito,sans-serif;font-weight:800;">${correctShow}</span>`;
+    fb.className = 'feedback-wrong';
+  }
+
+  updateMeter();
+}
+
+// ══════════════════════════════════════════════
+//  HINT  (words mode only)
+// ══════════════════════════════════════════════
+function showHint() {
+  if (!currentQ || currentQ.type !== 'words' || hintShown) return;
+  hintShown = true;
+  const card = document.getElementById('q-card');
+  if (!card.querySelector('.hint-box')) {
+    const div = document.createElement('div');
+    div.className   = 'hint-box';
+    div.textContent = '💡 Hint: ' + currentQ.hint;
+    card.appendChild(div);
+  }
+}
+
+// ══════════════════════════════════════════════
+//  STAR CONFETTI
+// ══════════════════════════════════════════════
+function spawnStars() {
+  const icons = ['⭐','🌟','✨','💫','🎉'];
+  for (let i = 0; i < 6; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className   = 'star';
+      el.textContent = icons[Math.floor(Math.random() * icons.length)];
+      el.style.left  = (15 + Math.random() * 70) + '%';
+      el.style.top   = (15 + Math.random() * 65) + '%';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1200);
+    }, i * 90);
+  }
+}
+
+// ══════════════════════════════════════════════
+//  LIVE LETTER PREVIEW  (words mode)
+// ══════════════════════════════════════════════
+document.getElementById('ans-input').addEventListener('input', () => {
+  if (!currentQ || currentQ.type !== 'words' || answered) return;
+  const typed = document.getElementById('ans-input').value.toUpperCase();
+  const b0 = document.getElementById('blank-0');
+  const b1 = document.getElementById('blank-1');
+  if (b0) b0.textContent = typed[0] || '_';
+  if (b1) b1.textContent = typed[1] || '_';
+});
+
+// ══════════════════════════════════════════════
+//  KEYBOARD  — Enter to submit / advance
+// ══════════════════════════════════════════════
+document.getElementById('ans-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (!answered) checkAnswer();
+    else nextQuestion();
+  }
+});
+
+// ══════════════════════════════════════════════
+//  JOKES
+// ══════════════════════════════════════════════
+const jokes = [
+  { setup: "Why did the math book look so sad?",           punchline: "Because it had too many problems! 📚" },
+  { setup: "What do you call a fish without eyes?",        punchline: "A fsh! 🐟" },
+  { setup: "Why can't Elsa have a balloon?",               punchline: "Because she'll let it go! 🎈" },
+  { setup: "What do elves learn in school?",               punchline: "The elf-abet! 🧝" },
+  { setup: "Why did the student eat his homework?",        punchline: "Because the teacher told him it was a piece of cake! 🍰" },
+  { setup: "What do you call a sleeping dinosaur?",        punchline: "A dino-snore! 🦕" },
+  { setup: "Why did the bicycle fall over?",               punchline: "Because it was two-tired! 🚲" },
+  { setup: "What do you call cheese that isn't yours?",    punchline: "Nacho cheese! 🧀" },
+  { setup: "Why did the teddy bear say no to dessert?",    punchline: "Because she was already stuffed! 🐻" },
+  { setup: "What gets wetter the more it dries?",         punchline: "A towel! 🛁" },
+  { setup: "Why do cows wear bells?",                      punchline: "Because their horns don't work! 🐄" },
+  { setup: "What do you call a dinosaur that crashes their car?", punchline: "Tyrannosaurus wrecks! 🦖" },
+  { setup: "Why did the scarecrow win an award?",          punchline: "Because he was outstanding in his field! 🌾" },
+  { setup: "What do you call a fake noodle?",             punchline: "An impasta! 🍝" },
+  { setup: "Why can't a nose be 12 inches long?",         punchline: "Because then it'd be a foot! 👃" },
+  { setup: "What do you call a dog magician?",             punchline: "A labracadabrador! 🐶" },
+  { setup: "Why did the cookie go to the doctor?",        punchline: "Because it was feeling crummy! 🍪" },
+  { setup: "How do you make a tissue dance?",             punchline: "You put a little boogie in it! 🕺" },
+  { setup: "What do you call a snail on a ship?",         punchline: "A snailor! 🐌" },
+  { setup: "Why did the banana go to the doctor?",        punchline: "Because it wasn't peeling well! 🍌" },
+  { setup: "What animal needs to wear a wig?",            punchline: "A bald eagle! 🦅" },
+  { setup: "Why do bees have sticky hair?",               punchline: "Because they use a honeycomb! 🍯" },
+  { setup: "What do you call a pig that does karate?",    punchline: "A pork chop! 🥋" },
+  { setup: "Why did the golfer bring extra pants?",       punchline: "In case he got a hole in one! ⛳" },
+  { setup: "What do you call a sad cup of coffee?",       punchline: "A depresso! ☕" },
+];
+
+let lastJokeIndex = -1;
+
+function showJoke() {
+  let idx;
+  do { idx = Math.floor(Math.random() * jokes.length); } while (idx === lastJokeIndex);
+  lastJokeIndex = idx;
+  const joke = jokes[idx];
+  document.getElementById('joke-setup').textContent     = joke.setup;
+  document.getElementById('joke-punchline').textContent = joke.punchline;
+  document.getElementById('joke-punchline').classList.add('hidden');
+  document.getElementById('joke-hint').style.display    = 'block';
+  document.getElementById('joke-overlay').style.display = 'flex';
+}
+
+function revealPunchline() {
+  document.getElementById('joke-punchline').classList.remove('hidden');
+  document.getElementById('joke-hint').style.display = 'none';
+}
+
+function closeJoke(reaction) {
+  const overlay = document.getElementById('joke-overlay');
+  overlay.style.animation = 'fadeOverlay 0.2s ease reverse forwards';
+  setTimeout(() => {
+    overlay.style.display   = 'none';
+    overlay.style.animation = '';
+  }, 200);
+  // schedule next joke
+  scheduleJoke();
+}
+
+function scheduleJoke() {
+  setTimeout(showJoke, 3 * 60 * 1000); // every 3 minutes
+}
+
+// tap setup text or punchline area to reveal
+document.addEventListener('click', e => {
+  const overlay = document.getElementById('joke-overlay');
+  if (overlay.style.display === 'none') return;
+  const punchline = document.getElementById('joke-punchline');
+  if (punchline.classList.contains('hidden')) {
+    // click anywhere on the joke box reveals punchline
+    if (e.target.closest('.joke-box') && !e.target.closest('.joke-btn')) {
+      revealPunchline();
+    }
+  }
+});
+
+// ── INIT ──
+updateMeter();
+scheduleJoke();
+</script>
+</body>
+</html>
